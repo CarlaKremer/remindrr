@@ -2,7 +2,11 @@ import { Pressable, StyleSheet } from "react-native";
 import { useBaseStyles } from "../hooks/use-base-styles";
 import { ThemedText } from "./themed-text";
 
-export default function AddReminder() {
+interface AddReminderProps {
+  createReminder: () => void;
+}
+
+export default function AddReminder({ createReminder }: AddReminderProps) {
   const baseStyles = useBaseStyles();
   const styles = StyleSheet.create({
     touchable: {
@@ -14,7 +18,10 @@ export default function AddReminder() {
     },
   });
   return (
-    <Pressable style={[baseStyles.button, styles.touchable]}>
+    <Pressable
+      style={[baseStyles.button, styles.touchable]}
+      onPress={createReminder}
+    >
       <ThemedText>+ Add Reminder</ThemedText>
     </Pressable>
   );

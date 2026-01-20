@@ -5,16 +5,14 @@ import { useBaseStyles } from "../hooks/use-base-styles";
 import { useThemeColor } from "../hooks/use-theme-color";
 import Card from "./card";
 import { ThemedText } from "./themed-text";
+import { ReminderType } from "../types/reminder";
 
 export default function Reminder({
   title,
   description,
-  dateTime,
-}: {
-  title?: string;
-  description?: string;
-  dateTime?: string;
-}) {
+  date,
+  time,
+}: ReminderType) {
   const [openModal, setOpenModal] = React.useState(false);
   const textColor = useThemeColor({}, "text");
   const inputBackgroundColor = useThemeColor({}, "input");
@@ -23,13 +21,6 @@ export default function Reminder({
   const tintColor = useThemeColor({}, "tint");
   const baseStyles = useBaseStyles();
   const styles = StyleSheet.create({
-    editBtn: {
-      padding: 6,
-      position: "absolute",
-      top: -10,
-      right: 0,
-      zIndex: 1,
-    },
     options: {
       padding: 10,
       backgroundColor: inputBackgroundColor,
@@ -38,6 +29,13 @@ export default function Reminder({
       color: textColor,
       justifyContent: "center",
       alignItems: "center",
+    },
+    squareBtn: {
+      padding: 6,
+      position: "absolute",
+      top: -0,
+      right: 0,
+      zIndex: 1,
     },
   });
 
@@ -55,11 +53,30 @@ export default function Reminder({
     console.log("Delete clicked");
     setOpenModal(false);
   };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "";
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch {
+      return dateString;
+    }
+  };
+
+  const formatTime = (timeString: string | null) => {
+    if (!timeString) return "";
+    try {
+      return new Date(timeString).toLocaleTimeString();
+    } catch {
+      return timeString;
+    }
+  };
+
   return (
     <Card>
       <View>
         <Pressable
-          style={[baseStyles.button, styles.editBtn]}
+          style={[baseStyles.button, styles.squareBtn]}
           onPress={moreOptions}
         >
           <AntDesign name="more" size={20} color={`${tintColor}`} />
@@ -67,7 +84,12 @@ export default function Reminder({
 
         <ThemedText type="default">{title}</ThemedText>
         <ThemedText type="default">{description}</ThemedText>
-        <ThemedText type="default">{dateTime}</ThemedText>
+        {date && (
+          <ThemedText type="default">Date: {formatDate(date.toString())}</ThemedText>
+        )}
+        {time && (
+          <ThemedText type="default">Time: {formatTime(time.toString())}</ThemedText>
+        )}
 
         <Modal
           animationType="slide"

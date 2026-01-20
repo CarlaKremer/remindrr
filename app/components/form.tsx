@@ -1,21 +1,35 @@
+import AntDesign from "@expo/vector-icons/AntDesign";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { useBaseStyles } from "../hooks/use-base-styles";
 import { useThemeColor } from "../hooks/use-theme-color";
+import { ReminderType } from "../types/reminder";
 import Card from "./card";
 import DateTimePicker from "./date-time-picker";
 import { ThemedText } from "./themed-text";
-export default function Form() {
+
+interface FormProps {
+  data: ReminderType;
+  onDataChange: (data: ReminderType) => void;
+  onClose: (data: ReminderType) => void;
+}
+
+export default function Form({ data, onDataChange, onClose }: FormProps) {
   const textColor = useThemeColor({}, "text");
   const inputBackgroundColor = useThemeColor({}, "input");
   const borderColor = useThemeColor({}, "borderColor");
   const tintColor = useThemeColor({}, "tint");
   const baseStyles = useBaseStyles();
-  const [date, setDate] = useState<Date | null>(null);
-  const [time, setTime] = useState<Date | null>(null);
+  const [date, setDate] = useState<Date | null>(
+    data.date ? new Date(data.date) : null,
+  );
+  const [time, setTime] = useState<Date | null>(
+    data.time ? new Date(data.time) : null,
+  );
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
-
+  const [title, setTitle] = useState(data.title);
+  const [description, setDescription] = useState(data.description);
   const onChange = (event: any, selectedDate: Date | undefined) => {
     setShow(false);
     if (selectedDate) {
@@ -61,19 +75,29 @@ export default function Form() {
   });
 
   return (
-    <Card>
+    <Card customStyle={{ paddingTop: 32 }}>
+      <Pressable
+        style={[baseStyles.closeButton]}
+        onPress={() => onClose({ title, description, date, time })}
+      >
+        <AntDesign name="close" size={20} color={`${tintColor}`} />
+      </Pressable>
       <View>
         <TextInput
           style={styles.textInput}
           placeholder="Title"
           placeholderTextColor={textColor}
           underlineColorAndroid={textColor}
+          value={title}
+          onChangeText={setTitle}
         />
         <TextInput
           style={styles.textInput}
           placeholder="Description"
           placeholderTextColor={textColor}
           underlineColorAndroid={textColor}
+          value={description}
+          onChangeText={setDescription}
         />
 
         <View style={{ flexDirection: "row", gap: 10, width: "100%" }}>
@@ -129,7 +153,20 @@ export default function Form() {
           />
         )}
 
-        <Pressable style={[baseStyles.button, styles.confirmButton]}>
+        <Pressable
+          style={[baseStyles.button, styles.confirmButton]}
+          onPress={() => {
+            const formData = {
+              title,
+              description,
+              date,
+              time,
+            };
+            console.log("Form data submitted:", formData);
+            onDataChange(formData);
+            onClose(formData);
+          }}
+        >
           <ThemedText type="input">+ Add reminder</ThemedText>
         </Pressable>
       </View>

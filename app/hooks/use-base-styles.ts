@@ -17,5 +17,11 @@ export function useBaseStyles() {
       marginVertical: 10,
       color: textColor,
     },
+    closeButton: {
+      position: "absolute",
+      top: 10,
+      right: 10,
+      zIndex: 1,
+    },
   });
 }
