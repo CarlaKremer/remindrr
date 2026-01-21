@@ -3,16 +3,24 @@ import React from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useBaseStyles } from "../hooks/use-base-styles";
 import { useThemeColor } from "../hooks/use-theme-color";
+import { ReminderType } from "../types/reminder";
 import Card from "./card";
 import { ThemedText } from "./themed-text";
-import { ReminderType } from "../types/reminder";
+
+interface ReminderProps extends ReminderType {
+  onEdit?: () => void;
+  onDelete?: () => void;
+  index?: number;
+}
 
 export default function Reminder({
   title,
   description,
   date,
   time,
-}: ReminderType) {
+  onEdit,
+  onDelete,
+}: ReminderProps) {
   const [openModal, setOpenModal] = React.useState(false);
   const textColor = useThemeColor({}, "text");
   const inputBackgroundColor = useThemeColor({}, "input");
@@ -45,13 +53,17 @@ export default function Reminder({
   };
 
   const handleEdit = () => {
-    console.log("Edit clicked");
     setOpenModal(false);
+    if (onEdit) {
+      onEdit();
+    }
   };
 
   const handleDelete = () => {
-    console.log("Delete clicked");
     setOpenModal(false);
+    if (onDelete) {
+      onDelete();
+    }
   };
 
   const formatDate = (dateString: string | null) => {
@@ -85,10 +97,14 @@ export default function Reminder({
         <ThemedText type="default">{title}</ThemedText>
         <ThemedText type="default">{description}</ThemedText>
         {date && (
-          <ThemedText type="default">Date: {formatDate(date.toString())}</ThemedText>
+          <ThemedText type="default">
+            Date: {formatDate(date.toString())}
+          </ThemedText>
         )}
         {time && (
-          <ThemedText type="default">Time: {formatTime(time.toString())}</ThemedText>
+          <ThemedText type="default">
+            Time: {formatTime(time.toString())}
+          </ThemedText>
         )}
 
         <Modal

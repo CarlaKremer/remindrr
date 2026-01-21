@@ -12,9 +12,15 @@ interface FormProps {
   data: ReminderType;
   onDataChange: (data: ReminderType) => void;
   onClose: (data: ReminderType) => void;
+  editing?: boolean;
 }
 
-export default function Form({ data, onDataChange, onClose }: FormProps) {
+export default function Form({
+  data,
+  onDataChange,
+  onClose,
+  editing = false,
+}: FormProps) {
   const textColor = useThemeColor({}, "text");
   const inputBackgroundColor = useThemeColor({}, "input");
   const borderColor = useThemeColor({}, "borderColor");
@@ -167,7 +173,9 @@ export default function Form({ data, onDataChange, onClose }: FormProps) {
             onClose(formData);
           }}
         >
-          <ThemedText type="input">+ Add reminder</ThemedText>
+          <ThemedText type="input">
+            {editing ? "Save" : "+ Add reminder"}
+          </ThemedText>
         </Pressable>
       </View>
     </Card>
